@@ -41,7 +41,9 @@ def call_groq(prompt: str) -> str:
         json=body,
         timeout=60,
     )
-    resp.raise_for_status()
+    if not resp.ok:
+        print(f"❌ Groq error {resp.status_code}: {resp.text}")
+        resp.raise_for_status()
     return resp.json()["choices"][0]["message"]["content"]
 
 
