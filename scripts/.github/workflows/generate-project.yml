@@ -1,0 +1,30 @@
+name: Auto Generate GitHub Project
+
+on:
+  schedule:
+    # هر ۲ روز یک‌بار - ساعت ۱۰ صبح UTC (۱:۳۰ بعدازظهر تهران)
+    - cron: '0 10 */2 * *'
+  workflow_dispatch:  # اجرای دستی هم ممکنه
+
+jobs:
+  generate-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests PyGithub
+
+      - name: Generate and publish project
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
+        run: python scripts/generate_project.py
